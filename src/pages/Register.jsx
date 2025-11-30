@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axiosInstance from '../config/axios.js'
+import { useUser } from '../context/useUser.js'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ function Register() {
   const [error, setError] = useState('')
 
   const navigate = useNavigate()
+  const { login } = useUser()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -39,9 +41,8 @@ function Register() {
         password: formData.password
       })
 
-      // Store token in localStorage
-      localStorage.setItem('token', response.data.token)
-      localStorage.setItem('user', JSON.stringify(response.data.user))
+      // Store token and user in context
+      login(response.data.user, response.data.token)
 
       // Redirect to dashboard or home
       navigate('/')
