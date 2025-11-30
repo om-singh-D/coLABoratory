@@ -1,12 +1,12 @@
 import React from 'react'
-
+import AppRoutes from './routes/AppRoutes.jsx'
 
 function App() {
   
 
   return (
     <>
-      <h1>colaboratory</h1>
+      <AppRoutes />
         
     </>
   )
