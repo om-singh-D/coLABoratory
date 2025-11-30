@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useUser } from '../context/useUser.js'
 
 function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user, logout, isAuthenticated } = useUser()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   const features = [
     {
@@ -98,12 +106,31 @@ function Home() {
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/login" className="text-gray-400 hover:text-white transition-colors text-sm px-4 py-2">
-                Sign In
-              </Link>
-              <Link to="/register" className="bg-white text-gray-900 hover:bg-gray-100 px-5 py-2 rounded-lg text-sm font-medium transition-colors">
-                Get Started
-              </Link>
+              {isAuthenticated() ? (
+                <>
+                  <span className="text-gray-400 text-sm">
+                    Hey, <span className="text-white font-medium">{user?.name || user?.email?.split('@')[0]}</span>
+                  </span>
+                  <Link to="/dashboard" className="text-gray-400 hover:text-white transition-colors text-sm px-4 py-2">
+                    Dashboard
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="bg-white/10 text-white hover:bg-white/20 px-5 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="text-gray-400 hover:text-white transition-colors text-sm px-4 py-2">
+                    Sign In
+                  </Link>
+                  <Link to="/register" className="bg-white text-gray-900 hover:bg-gray-100 px-5 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -128,14 +155,31 @@ function Home() {
                 <a href="#features" className="text-gray-400 hover:text-white transition-colors">Features</a>
                 <a href="#tech" className="text-gray-400 hover:text-white transition-colors">Tech Stack</a>
                 <a href="#about" className="text-gray-400 hover:text-white transition-colors">About</a>
-                <div className="flex gap-3 mt-2">
-                  <Link to="/login" className="text-gray-400 hover:text-white transition-colors px-4 py-2">
-                    Sign In
-                  </Link>
-                  <Link to="/register" className="bg-white text-gray-900 px-5 py-2 rounded-lg text-sm font-medium">
-                    Get Started
-                  </Link>
-                </div>
+                {isAuthenticated() ? (
+                  <div className="flex flex-col gap-3 mt-2">
+                    <span className="text-gray-400 text-sm">
+                      Hey, <span className="text-white font-medium">{user?.name || user?.email?.split('@')[0]}</span>
+                    </span>
+                    <Link to="/dashboard" className="text-gray-400 hover:text-white transition-colors px-4 py-2">
+                      Dashboard
+                    </Link>
+                    <button 
+                      onClick={handleLogout}
+                      className="bg-white/10 text-white px-5 py-2 rounded-lg text-sm font-medium text-left"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-3 mt-2">
+                    <Link to="/login" className="text-gray-400 hover:text-white transition-colors px-4 py-2">
+                      Sign In
+                    </Link>
+                    <Link to="/register" className="bg-white text-gray-900 px-5 py-2 rounded-lg text-sm font-medium">
+                      Get Started
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -165,15 +209,27 @@ function Home() {
             </p>
 
             <div className="flex flex-wrap gap-4 mt-10">
-              <Link 
-                to="/register" 
-                className="group inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-all"
-              >
-                Start Collaborating
-                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
+              {isAuthenticated() ? (
+                <Link 
+                  to="/dashboard" 
+                  className="group inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-all"
+                >
+                  Go to Dashboard
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              ) : (
+                <Link 
+                  to="/register" 
+                  className="group inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-all"
+                >
+                  Start Collaborating
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              )}
               <a 
                 href="#features" 
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 hover:border-white/20 transition-all"
