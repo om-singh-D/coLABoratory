@@ -306,7 +306,7 @@ function Home() {
               {project.map((project) => (
                 <div
                   key={project._id}
-                  onClick={() => navigate(`/project/${project._id}`)}
+                  onClick={() => navigate(`/project/${project._id}`, { state: { project } })}
                   className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer"
                 >
                   <div className="flex items-center justify-between mb-3">
