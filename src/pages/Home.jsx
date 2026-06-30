@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/useUser.js'
 import axiosInstance from '../config/axios.js'
 
+
 function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -12,6 +13,9 @@ function Home() {
   const { user, logout, isAuthenticated } = useUser()
   const navigate = useNavigate()
   const [project, setProject] = useState([])
+
+   
+
 
 
   const handleCreateProject = async (e) => {
@@ -302,7 +306,8 @@ function Home() {
               {project.map((project) => (
                 <div
                   key={project._id}
-                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-all"
+                  onClick={() => navigate(`/project/${project._id}`)}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="text-xs uppercase tracking-wider text-gray-500">Project</div>
