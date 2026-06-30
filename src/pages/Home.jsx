@@ -304,7 +304,15 @@ function Home() {
                   key={project._id}
                   className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-all"
                 >
-                  <div className="text-xs uppercase tracking-wider text-gray-500 mb-3">Project</div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="text-xs uppercase tracking-wider text-gray-500">Project</div>
+                    <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-500/20 text-xs font-medium text-purple-300">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {project.users?.length || 0}
+                    </div>
+                  </div>
                   <h3 className="text-lg font-semibold text-white">{project.name}</h3>
                 </div>
               ))}
