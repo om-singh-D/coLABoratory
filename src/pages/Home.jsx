@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/useUser.js'
 import axiosInstance from '../config/axios.js'
@@ -11,6 +11,8 @@ function Home() {
   const [error, setError] = useState('')
   const { user, logout, isAuthenticated } = useUser()
   const navigate = useNavigate()
+  const [project, setProject] = useState([])
+
 
   const handleCreateProject = async (e) => {
     e.preventDefault()
@@ -20,10 +22,6 @@ function Home() {
     try {
       const response = await axiosInstance.post('/projects/create', {
         name: projectName
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
       })
 
       console.log('Project created:', response.data)
@@ -38,6 +36,16 @@ function Home() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+
+    axiosInstance.get('/projects/all').then((res) => {
+      setProject(res.data.projects || [])
+    }).catch((err) => {
+      console.log(err)
+    })
+
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -279,6 +287,27 @@ function Home() {
               >
                 Learn More
               </a>
+            </div>
+          </div>
+
+          <div className="mt-20">
+            <div className="flex items-end justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">Your Projects</h2>
+                <p className="text-gray-400">Projects returned from the backend `/projects/all` endpoint.</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {project.map((project) => (
+                <div
+                  key={project._id}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-all"
+                >
+                  <div className="text-xs uppercase tracking-wider text-gray-500 mb-3">Project</div>
+                  <h3 className="text-lg font-semibold text-white">{project.name}</h3>
+                </div>
+              ))}
             </div>
           </div>
 
