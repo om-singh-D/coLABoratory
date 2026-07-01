@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AddUserModal from './AddUserModal'
 
-const ProjectHeader = ({ project, onProjectUpdate }) => {
+const ProjectHeader = ({ project, onProjectUpdate, webContainerStatus }) => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -30,6 +30,26 @@ const ProjectHeader = ({ project, onProjectUpdate }) => {
           <div className="px-4 py-1.5 bg-white/5 rounded-md text-sm text-gray-400 font-medium flex items-center gap-2 border border-white/5">
             workspace <span className="text-gray-600">/</span> <span className="text-gray-200">{project?.name || 'Project'}</span>
           </div>
+          {webContainerStatus && (
+            <div className="ml-4 px-3 py-1 bg-white/5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/10">
+              <span className="relative flex h-2 w-2">
+                {webContainerStatus === 'booting' && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                )}
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                  webContainerStatus === 'ready' ? 'bg-green-500' :
+                  webContainerStatus === 'error' ? 'bg-red-500' : 'bg-yellow-500'
+                }`}></span>
+              </span>
+              <span className={`${
+                  webContainerStatus === 'ready' ? 'text-green-400' :
+                  webContainerStatus === 'error' ? 'text-red-400' : 'text-yellow-400'
+                }`}>
+                {webContainerStatus === 'ready' ? 'Container Ready' : 
+                 webContainerStatus === 'booting' ? 'Booting Container...' : 'Container Error'}
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex gap-2">
            <button 

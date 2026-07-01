@@ -15,6 +15,7 @@
     "@uiw/codemirror-extensions-langs": "^4.25.10",
     "@uiw/codemirror-theme-vscode": "^4.25.10",
     "@uiw/react-codemirror": "^4.25.10",
+    "@webcontainer/api": "^1.6.4",
     "axios": "^1.13.2",
     "markdown-to-jsx": "^9.8.2",
     "react": "^19.2.0",

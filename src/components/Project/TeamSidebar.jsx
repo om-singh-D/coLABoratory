@@ -49,7 +49,7 @@ const TeamSidebar = ({ users = [], messages = [], onSendMessage }) => {
   }
 
   return (
-    <div className="border-r border-white/5 relative hidden md:flex flex-col bg-gray-900/30 overflow-hidden h-full">
+    <div className="border-r border-white/5 relative hidden md:flex flex-col bg-gray-900/30 overflow-hidden h-full min-h-0">
       {/* Main View (Default State): Vertical chat container */}
       <div className="flex flex-col h-full w-full">
         {/* Header */}
