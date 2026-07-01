@@ -15,13 +15,14 @@ function Project() {
   // Initialize with the project passed from location state
   const [project, setProject] = useState(location.state?.project || null)
   const { user } = useContext(UserContext)
-  const [messages, setMessages] = useState([]) // Array to store chat messages
+  const [messages, setMessages] = useState(location.state?.project?.messages || []) // Array to store chat messages
   const fetchProjectDetails = useCallback(async () => {
     if (!project?._id) return
     try {
       const res = await axiosInstance.get(`/projects/get-project/${project._id}`)
       if (res.data.project) {
         setProject(res.data.project)
+        setMessages(res.data.project.messages || [])
       }
     } catch (error) {
       console.error("Failed to fetch project details:", error)
