@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
 
-const TeamSidebar = ({ users = [] }) => {
+const TeamSidebar = ({ users = [], messages = [], onSendMessage }) => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
-  const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
 
   const handleSend = (e) => {
     e.preventDefault()
     if (!input.trim()) return
-    setMessages([...messages, { id: Date.now(), text: input, sender: 'Me' }])
+    
+    if (onSendMessage) {
+      onSendMessage(input)
+    }
+    
     setInput('')
   }
 
