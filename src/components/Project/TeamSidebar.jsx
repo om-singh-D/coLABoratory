@@ -1,8 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 const TeamSidebar = ({ users = [], messages = [], onSendMessage }) => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [input, setInput] = useState('')
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   const handleSend = (e) => {
     e.preventDefault()
@@ -60,13 +69,14 @@ const TeamSidebar = ({ users = [], messages = [], onSendMessage }) => {
           {messages.length === 0 ? (
             <div className="text-xs text-gray-500 italic text-center mt-10">No messages yet.</div>
           ) : (
-            messages.map((msg) => (
-              <div key={msg.id} className="text-sm">
+            messages.map((msg, i) => (
+              <div key={msg._id || msg.id || i} className="text-sm">
                 <span className="font-semibold text-gray-400 mr-2">{msg.sender}:</span>
                 <span className="text-gray-200 break-words">{msg.text}</span>
               </div>
             ))
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Footer: Text input field and Send button */}
