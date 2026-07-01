@@ -198,15 +198,16 @@ function Project() {
             </button>
           </div>
           
-          <div className="flex-1 overflow-hidden">
-            {rightTab === 'ai' ? (
+          <div className="flex-1 overflow-hidden relative">
+            <div className={`absolute inset-0 ${rightTab === 'ai' ? 'block' : 'hidden'}`}>
               <AiPanel projectId={project?._id} fileTree={fileTree} setFileTree={(newTree) => {
                   setFileTree(newTree);
                   sendMessage('project-update-file-tree', { fileTree: newTree });
               }} />
-            ) : (
+            </div>
+            <div className={`absolute inset-0 ${rightTab === 'preview' ? 'block' : 'hidden'}`}>
               <PreviewWindow url={previewUrl} />
-            )}
+            </div>
           </div>
         </div>
       </div>
