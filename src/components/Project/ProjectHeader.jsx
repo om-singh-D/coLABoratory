@@ -2,15 +2,17 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AddUserModal from './AddUserModal'
 
-const ProjectHeader = ({ project }) => {
+const ProjectHeader = ({ project, onProjectUpdate }) => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Assuming project has a reload/refresh method or it relies on location state, 
   // we might not refresh it right away, but we provide the callback in case
   const handleUsersAdded = () => {
-    // Optionally trigger a refresh of the project data if passed from parent
-    console.log("Users added!")
+    // Trigger a refresh of the project data if passed from parent
+    if (onProjectUpdate) {
+      onProjectUpdate()
+    }
   }
 
   return (
