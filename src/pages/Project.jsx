@@ -15,7 +15,9 @@ function Project() {
   // Initialize with the project passed from location state
   const [project, setProject] = useState(location.state?.project || null)
   const { user } = useContext(UserContext)
-  const [messages, setMessages] = useState(location.state?.project?.messages || []) // Array to store chat messages
+  const [messages, setMessages] = useState(location.state?.project?.messages || [])
+  const [fileTree, setFileTree] = useState(location.state?.project?.fileTree || {})
+  const [activeFile, setActiveFile] = useState(null)
   const fetchProjectDetails = useCallback(async () => {
     if (!project?._id) return
     try {
@@ -23,6 +25,7 @@ function Project() {
       if (res.data.project) {
         setProject(res.data.project)
         setMessages(res.data.project.messages || [])
+        setFileTree(res.data.project.fileTree || {})
       }
     } catch (error) {
       console.error("Failed to fetch project details:", error)
@@ -44,6 +47,10 @@ function Project() {
     recieveMessage('project-message', data => {
       console.log('New project message:', data)
       setMessages(prev => [...prev, data]) // Append incoming message
+    })
+
+    recieveMessage('project-update-file-tree', data => {
+      setFileTree(data.fileTree)
     })
 
     // Cleanup function runs when the component unmounts,
@@ -69,9 +76,6 @@ function Project() {
           users={project?.users || []} 
           messages={messages}
           onSendMessage={(msgText) => {
-            // Optimistic update (optional) or just send it
-            // We'll just emit it to the server and let the server broadcast
-            // But Socket.io broadcast doesn't send to sender, so we append locally
             const newMsg = { id: Date.now(), text: msgText, sender: user.name || user.email?.split('@')[0] || 'Me' };
             setMessages(prev => [...prev, newMsg]);
             
@@ -79,11 +83,45 @@ function Project() {
               id: newMsg.id,
               text: msgText,
               sender: newMsg.sender
-            })
+            });
+
+            if (msgText.toLowerCase().includes('@ai')) {
+              let prompt = msgText.replace(/@ai/gi, '').trim();
+              
+              if (activeFile && fileTree[activeFile]) {
+                 prompt = `Context file: ${activeFile}\nContents:\n${fileTree[activeFile].file.contents}\n\nQuestion: ${prompt}`;
+              }
+              
+              axiosInstance.get(`/ai/get-result?prompt=${encodeURIComponent(prompt)}`)
+                .then(res => {
+                  const aiMsgText = res.data.result;
+                  const aiMsg = { id: Date.now(), text: aiMsgText, sender: 'AI' };
+                  
+                  setMessages(prev => [...prev, aiMsg]);
+                  sendMessage('project-message', {
+                    id: aiMsg.id,
+                    text: aiMsgText,
+                    sender: 'AI'
+                  });
+                })
+                .catch(err => console.error("AI Error:", err));
+            }
           }}
         />
-        <Editor projectName={project?.name} />
-        <AiPanel projectId={project?._id} />
+        <Editor 
+          projectName={project?.name} 
+          fileTree={fileTree} 
+          setFileTree={(newTree) => {
+            setFileTree(newTree);
+            sendMessage('project-update-file-tree', { fileTree: newTree });
+          }}
+          activeFile={activeFile}
+          setActiveFile={setActiveFile}
+        />
+        <AiPanel projectId={project?._id} fileTree={fileTree} setFileTree={(newTree) => {
+            setFileTree(newTree);
+            sendMessage('project-update-file-tree', { fileTree: newTree });
+        }} />
       </div>
     </div>
   )
